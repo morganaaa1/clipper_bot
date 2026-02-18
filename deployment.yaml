@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clipper-bot-deployment
+  labels:
+    app: clipper-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clipper-bot
+  template:
+    metadata:
+      labels:
+        app: clipper-bot
+    spec:
+      containers:
+      - name: clipper-bot-container
+        image: morgashann/clipper-bot:latest  # Ganti 'username' dengan Docker Hub kamu
+        imagePullPolicy: Always
+        env:
+          - name: GROQ_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: bot-secrets
+                key: GROQ_API_KEY
+          - name: TELEGRAM_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: bot-secrets
+                key: TELEGRAM_TOKEN
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"

@@ -1,0 +1,22 @@
+# Menggunakan base image Python yang ringan
+FROM python:3.10-slim
+
+# Install system dependencies (FFmpeg sangat penting untuk pengolahan video)
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set folder kerja di dalam container
+WORKDIR /app
+
+# Copy file requirements terlebih dahulu (untuk caching layer)
+COPY requirements.txt .
+
+# Install library Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy seluruh kode project ke dalam container
+COPY . .
+
+# Jalankan aplikasi
+CMD ["python", "main.py"]
